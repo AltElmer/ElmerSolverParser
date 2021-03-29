@@ -4,6 +4,8 @@ grammar ElmerSolver;
 
 // Parser Rules
 
+// eostmt: ';' | CR;
+
 statement:;
 
 statement_list: statement | statement_list statement;
@@ -12,7 +14,13 @@ section: SectionName statement_list End;
 
 // Lexer Rules
 
-Integer: [0-9]+;
+fragment Integer: [0-9]+;
+
+Float:
+	Integer
+	| [+-]? ([0-9]+ ([.][0-9]*)? | [.][0-9]+) (
+		[Ee][+-]? Integer
+	)?;
 
 SectionName:
 	'Header'
@@ -28,6 +36,13 @@ SectionName:
 	| 'Component' Integer;
 
 End: 'End';
+
+StatementEnd: ';' NewLine* | NewLine+;
+
+fragment NewLine: '\r' '\n' | '\n' | '\r';
+
+LineJoining:
+	'\\' WhiteSpace? ('\r'? '\n' | '\r' | '\f') -> skip;
 
 WhiteSpace: [ \t\r\n]+ -> skip;
 
