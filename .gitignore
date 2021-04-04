@@ -131,3 +131,6 @@ dmypy.json
 # ANTLR
 .antlr
 
+# other
+build
+

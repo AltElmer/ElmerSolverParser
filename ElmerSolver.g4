@@ -1,6 +1,8 @@
 grammar ElmerSolver;
 
-// Options
+options {
+	language = Python3;
+}
 
 // Parser Rules
 
@@ -8,9 +10,9 @@ grammar ElmerSolver;
 
 statement:;
 
-statement_list: statement | statement_list statement;
+// statement_list: statement | statement_list statement;
 
-section: SectionName statement_list End;
+// section: SectionName statement_list End;
 
 // Lexer Rules
 
