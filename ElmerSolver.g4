@@ -1,47 +1,45 @@
 grammar ElmerSolver;
 
-options {
-	language = Python3;
-}
+// options { language = Python3; }
 
 // Parser Rules
 
-// eostmt: ';' | CR;
+statement: EndOfStatment;
 
-statement:;
-
-// statement_list: statement | statement_list statement;
+statement_list: statement+;
 
 // section: SectionName statement_list End;
 
+section:
+	'Header' statement_list End
+	| 'Simulation' statement_list End
+	| 'Constants' statement_list End
+	| 'Body ' Integer statement_list End
+	| 'Material ' Integer statement_list End
+	| 'Body Force ' Integer statement_list End
+	| 'Equation ' Integer statement_list End
+	| 'Solver ' Integer statement_list End
+	| 'Boundary Condition ' Integer statement_list End
+	| 'Initial Condition ' Integer statement_list End
+	| 'Component' Integer statement_list End;
+
+sections: section+ EOF;
+
 // Lexer Rules
 
-fragment Integer: [0-9]+;
+fragment DIGIT: [0-9];
+Integer: DIGIT+;
 
 Float:
-	Integer
-	| [+-]? ([0-9]+ ([.][0-9]*)? | [.][0-9]+) (
-		[Ee][+-]? Integer
-	)?;
-
-SectionName:
-	'Header'
-	| 'Simulation'
-	| 'Constants'
-	| 'Body ' Integer
-	| 'Material ' Integer
-	| 'Body Force ' Integer
-	| 'Equation ' Integer
-	| 'Solver ' Integer
-	| 'Boundary Condition ' Integer
-	| 'Initial Condition ' Integer
-	| 'Component' Integer;
+	[+-]? (DIGIT+ ([.]DIGIT*)? | [.]DIGIT+) ([Ee][+-]? DIGIT+)?;
 
 End: 'End';
 
-StatementEnd: ';' NewLine* | NewLine+;
+// statementEnd: ';' NewLine*;
 
-fragment NewLine: '\r' '\n' | '\n' | '\r';
+NewLine: ('\r'? '\n' | '\n' | '\r') -> skip;
+
+EndOfStatment: ';' | NewLine;
 
 LineJoining:
 	'\\' WhiteSpace? ('\r'? '\n' | '\r' | '\f') -> skip;
@@ -49,3 +47,4 @@ LineJoining:
 WhiteSpace: [ \t\r\n]+ -> skip;
 
 LineComment: '#' ~( '\r' | '\n')* -> skip;
+
